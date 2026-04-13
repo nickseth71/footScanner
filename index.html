@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scanner</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: black;
+      color: white;
+      overflow: hidden;
+    }
+
+    .camera-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Message */
+    .message {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.6);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    /* Scanning line */
+    .scan-line {
+      position: absolute;
+      width: 100%;
+      height: 3px;
+      background: red;
+      animation: scan 2s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { top: 0; }
+      100% { top: 100%; }
+    }
+
+    /* Result (Error Box) */
+    .result {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      
+      width: 85%;
+      max-width: 420px;
+
+      font-size: 15px;
+      display: none;
+      padding: 20px;
+
+      background: rgba(10,10,10,0.95);
+      border-radius: 12px;
+      text-align: center;
+
+      border: 1px solid #ff3b3b;
+      color: #ffcccc;
+      line-height: 1.6;
+
+      box-shadow: 0 0 25px rgba(255,0,0,0.3);
+      z-index: 10;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="camera-container">
+    <video id="video" autoplay playsinline></video>
+
+    <div class="message" id="msg">Initializing Camera...</div>
+    <div class="scan-line" id="scanLine"></div>
+
+    <div class="result" id="result">
+      ⚠️ AR Feature Unavailable<br><br>
+      This feature is not supported in the current environment.<br>
+      Shopify restricts access to advanced camera and AR capabilities within its in-app browser.<br><br>
+
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById("video");
+    const msg = document.getElementById("msg");
+    const result = document.getElementById("result");
+    const scanLine = document.getElementById("scanLine");
+
+    // Open BACK camera
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" }
+    })
+    .then(stream => {
+      video.srcObject = stream;
+      msg.innerText = "Scanning...";
+    })
+    .catch(() => {
+      msg.innerText = "Camera access blocked ❌";
+    });
+
+    // Fake scanning flow
+    setTimeout(() => {
+      msg.innerText = "Analyzing environment...";
+    }, 2000);
+
+    setTimeout(() => {
+      msg.innerText = "Detecting AR support...";
+    }, 4000);
+
+    setTimeout(() => {
+      msg.style.display = "none";
+      scanLine.style.display = "none";
+      result.style.display = "block";
+    }, 6000);
+  </script>
+
+</body>
+</html>
